@@ -12,48 +12,63 @@ import militaryToStandard from './Helper'
 
 export default function FormDialog(props) {
 
-    const { setValue:nameSetValue, value:nameValue, bind:nameBind, reset:nameReset } = useInput('');
-    const { setValue:attendeesSetValue, value:attendeesValue, bind:attendeesBind, reset:attendeesReset } = useInput('');
-    const { setValue:startSetValue, value:startValue, bind:startBind, reset:startReset } = useInput('');
-    const { setValue:endSetValue, value:endValue, bind:endBind, reset:endReset } = useInput('');
-    const { setValue:notesSetValue, value:notesValue, bind:notesBind, reset:notesReset } = useInput('');
-    const { value:createdByValue, bind:createdByBind, reset:createdByReset } = useInput('');
-    const { value:uuidValue, bind:uuidBind, reset:uuidReset } = useInput('');
+    // we don't need any of this anymore since we  "lifted" the event state up to the parent component (Calendar)
+    // const { setValue:nameSetValue, value:nameValue, bind:nameBind, reset:nameReset } = useInput('');
+    // const { setValue:attendeesSetValue, value:attendeesValue, bind:attendeesBind, reset:attendeesReset } = useInput('');
+    // const { setValue:startSetValue, value:startValue, bind:startBind, reset:startReset } = useInput('');
+    // const { setValue:endSetValue, value:endValue, bind:endBind, reset:endReset } = useInput('');
+    // const { setValue:notesSetValue, value:notesValue, bind:notesBind, reset:notesReset } = useInput('');
+    // const { value:createdByValue, bind:createdByBind, reset:createdByReset } = useInput('');
+    // const { value:uuidValue, bind:uuidBind, reset:uuidReset } = useInput('');
     const handleClickOpen = props.handleClickOpen
     const handleClose = props.handleClose
 
     const handleSubmit = (e) => {
       e.preventDefault();
-      console.log('hellos')
-      const newEvent = {
-          attendees:attendeesValue,
-          name:nameValue,
-          start_date_time:startValue,
-          end_date_time:endValue,
-          notes:notesValue,
-          createdBy: createdByValue,
-          uuid:uuidValue,
-      }
-      nameReset();
-      attendeesReset();
-      startReset();
-      endReset();
-      notesReset();
-      createdByReset();
-      uuidReset();
-      props.handleAddSubmit(newEvent)
+      // console.log('hellos')
+      // we don;t need this stuff anymore
+      // const newEvent = {
+      //     attendees:attendeesValue,
+      //     name:nameValue,
+      //     start_date_time:startValue,
+      //     end_date_time:endValue,
+      //     notes:notesValue,
+      //     createdBy: createdByValue,
+      //     uuid:uuidValue,
+      // }
+      // nameReset();
+      // attendeesReset();
+      // startReset();
+      // endReset();
+      // notesReset();
+      // createdByReset();
+      // uuidReset();
   }
-  const setValue = () => {
-    nameSetValue(props.emptyEvent['name'])
-    attendeesSetValue(props.emptyEvent['attendees'])
-    startSetValue(militaryToStandard(props.emptyEvent['start_date_time']))
-    endSetValue(militaryToStandard(props.emptyEvent['end_date_time']))
-    notesSetValue(props.emptyEvent['notes'])
-  }
+
+  // not needed
+  // const setValue = () => {
+  //   nameSetValue(props.emptyEvent['name'])
+  //   attendeesSetValue(props.emptyEvent['attendees'])
+  //   startSetValue(militaryToStandard(props.emptyEvent['start_date_time']))
+  //   endSetValue(militaryToStandard(props.emptyEvent['end_date_time']))
+  //   notesSetValue(props.emptyEvent['notes'])
+  // }
+
+  const {
+    name,
+    attendees,
+    start_date_time,
+    end_date_time,
+    notes,
+    createdBy,
+    uuid
+  } = props.currentEvent || {}
+
   return (
     <div>
       <Button variant="outlined" color="primary" onClick={() => {
-        handleClickOpen()
+        // this is NOT an edit
+        handleClickOpen(false)
         props.setIsAddShown(false)
         }}>
         Add Event
@@ -64,10 +79,12 @@ export default function FormDialog(props) {
       aria-labelledby="form-dialog-title">
         <DialogContent>
       <DialogTitle id="form-dialog-title">{props.isAddShown ? 'Add Event':'Edit Event'}</DialogTitle>
-          <button hidden={props.isAddShown ? true:false} onClick={setValue}>Load Event</button>
+          {/* we don't need this button anymore */}
+          {/* <button hidden={props.isAddShown ? true:false} onClick={setValue}>Load Event</button> */}
           <form onSubmit={handleSubmit} id='DialogForm' >
           <TextField
-            {...nameBind}
+            value={name}
+            onChange={(e) => {props.updateCurrentEvent('name', e.target.value)}}
             autoFocus
             margin="dense"
             id="name"
@@ -76,7 +93,8 @@ export default function FormDialog(props) {
             fullWidth
           />
           <TextField
-            {...attendeesBind}
+            value={attendees}
+            onChange={(e) => {props.updateCurrentEvent('attendees', e.target.value)}}
             autoFocus
             margin="dense"
             id="attendees"
@@ -84,16 +102,42 @@ export default function FormDialog(props) {
             type="text"
             fullWidth
           />
-          <DateAndTimePickers 
-              emptyEvent={props.emptyEvent} 
-              bind={startBind} 
+          {/* you might need to refactor these time pickers */}
+          <TextField
+            style={{width: 200}}
+            id="datetime-local"
+            value={start_date_time}
+            onChange={(e) => {props.updateCurrentEvent('start_date_time', e.target.value)}}
+            label="Start Date and Time"
+            type="datetime-local"
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+          <TextField
+            style={{width: 200}}
+            id="datetime-local"
+            value={end_date_time}
+            onChange={(e) => {props.updateCurrentEvent('end_date_time', e.target.value)}}
+            label="End Date and Time" 
+            type="datetime-local"
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+          {/* <DateAndTimePickers 
+              currentEvent={props.currentEvent} 
+              value={start_date_time}
+              onChange={(e) => {props.updateCurrentEvent('start_date_time', e.target.value)}}
               label="Start Date and Time" /><br></br>
           <DateAndTimePickers 
-              emptyEvent={props.emptyEvent} 
-              bind={endBind} 
-              label="End Date and Time" /><br></br>
+              currentEvent={props.currentEvent} 
+              value={end_date_time}
+              onChange={(e) => {props.updateCurrentEvent('end_date_time', e.target.value)}}
+              label="End Date and Time" /><br></br> */}
           <TextField
-            {...notesBind}
+            value={notes}
+            onChange={(e) => {props.updateCurrentEvent('notes', e.target.value)}}
             autoFocus
             margin="dense"
             id="notes"
@@ -103,6 +147,8 @@ export default function FormDialog(props) {
           />
           {props.isAddShown && <div>
             <TextField 
+              value={createdBy}
+              onChange={(e) => {props.updateCurrentEvent('createdBy', e.target.value)}}
               autoFocus
               margin="dense"
               id="createdBy"
@@ -111,6 +157,8 @@ export default function FormDialog(props) {
               fullWidth
             />
             <TextField 
+              value={uuid}
+              onChange={(e) => {props.updateCurrentEvent('uuid', e.target.value)}}
               autoFocus
               margin="dense"
               id="uuid"
@@ -126,7 +174,18 @@ export default function FormDialog(props) {
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <input type="submit" form="DialogForm" onClick={handleClose} value="Submit" color="primary"/>
+          {/* need to actually add the new/edited event */}
+          <input 
+            type="submit" 
+            form="DialogForm" 
+            onClick={()=>{
+              // we'll now submit this in a "controlled" way
+              props.handleAddSubmit(props.currentEvent);
+              handleClose();
+            }} 
+            value="Submit" 
+            color="primary"
+          />
         </DialogActions>
       </Dialog>
     </div>

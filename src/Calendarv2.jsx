@@ -65,7 +65,9 @@ export default class Calendar extends React.Component {
           isAddShown: false,
           isEditShown: false,
           isFormShown: false,
-        emptyEvent:{},
+        // we are going to use currentEvent to hold 
+        // current event that is displayed in dialog
+        currentEvent:{},
         sortedEvents:{},
         attendees: "Zach, Toby, the gang",
         end_date_time: "2021-01-02T8:12",
@@ -77,9 +79,20 @@ export default class Calendar extends React.Component {
     }
 }
 
+updateCurrentEvent = (eventProp, eventPropvalue) => {
+    this.setState(prevState => {
+        return {
+            currentEvent: {
+                ...prevState.currentEvent,
+                [eventProp]: eventPropvalue
+            }
+        }
+    })
+}
+
 handleDetailClick = (id) => {
     this.setState({targetedEvent: id})
-    this.setState({emptyEvent:this.state.events[id]})
+    this.setState({currentEvent:this.state.events[id]})
 }
 setIsAddShown = (value) => {
     this.setState({isAddShown:!value})
@@ -98,35 +111,47 @@ setIsEditShown = (value) => {
     this.setState({isEditShown:!this.state.isEditShown})
   }
 handleAddSubmit = (newEvent) => {
-    let events = {...this.state.events}
-    const uuid = newEvent["uuid"]
-    events[uuid] = newEvent
-    this.setState({events:events})
-    this.setState({isAddShown:false})
-    this.setState({isFormShown: false})
-
+    // only if event is an actual object
+    if (newEvent && newEvent !== {}) {
+        let events = {...this.state.events}
+        const uuid = newEvent["uuid"]
+        events[uuid] = newEvent
+        console.log(events)
+        console.log(newEvent)
+        this.setState({events:events})
+        this.setState({isAddShown:false})
+        this.setState({isFormShown: false})
+    }
   }
- handleClickOpen = () => {
+ handleClickOpen = (isEdit) => {
     this.setState({Open:true});
     if (this.state.isAddShown === true) {
-        this.setState({emptyEvent:null})
+        // we don't want to clear this on every open
+        // only when it is a new event
+        if (!isEdit) {
+            this.setState({currentEvent:{}})
+        }
     }
   };
 
  handleClose = () => {
     this.setState({Open:false});
+    // should also clear current Event
+    this.setState({currentEvent: {}})
   };
 render() {
     return (
         <>
     <FormDialog 
-    emptyEvent={this.state.emptyEvent}
+    currentEvent={this.state.currentEvent}
     Open={this.state.Open}
     handleClickOpen={this.handleClickOpen}
     handleClose={this.handleClose}
     handleAddSubmit={this.handleAddSubmit}
     setIsAddShown={this.setIsAddShown}
     isAddShown={this.state.isAddShown}
+    // new function for updating current event
+    updateCurrentEvent={this.updateCurrentEvent}
     />
     {/* <AddButton
     handleAddSubmit={this.handleAddSubmit}
@@ -142,7 +167,7 @@ render() {
     months={this.state.months} 
     isEditShown={this.state.isEditShown} 
     events={this.state.events}
-    emptyEvent={this.state.emptyEvent}
+    currentEvent={this.state.currentEvent}
     setIsEditShown={this.setIsEditShown}
     handleEditSubmit={this.handleEditSubmit}
     isEditShown={this.state.isEditShown}
@@ -156,6 +181,8 @@ render() {
     handleAddSubmit={this.handleAddSubmit}
     setIsAddShown={this.setIsAddShown}
     isAddShown={this.state.isAddShown}
+    // a new function for updating the higher-level state in Calendar component
+    updateCurrentEvent={this.updateCurrentEvent}
     />
     </>
     )

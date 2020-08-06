@@ -28,7 +28,7 @@ import EditButton from './EditButton';
                                 <p>Start date and time: {start_date_time}</p>
                                 <p>End date and time: {end_date_time}</p>
                                 <EditButton
-                                    emptyEvent={props.emptyEvent}
+                                    currentEvent={props.currentEvent}
                                     setIsEditShown={props.setIsEditShown}
                                     handleEditSubmit={props.handleEditSubmit}
                                     isEditShown={props.isEditShown}
@@ -113,7 +113,11 @@ import EditButton from './EditButton';
         }
         const sortEvents = props.events
         let totalSeperateArray = []
+        console.log(sortEvents);
         Object.keys(sortEvents).map(uuid => {
+            console.log(uuid)
+            console.log(sortEvents)
+            console.log(sortEvents[uuid])
             let tempArray = splitDate(sortEvents, uuid)
             let objEvent = props.events[uuid]
             objEvent['uuid'] = uuid

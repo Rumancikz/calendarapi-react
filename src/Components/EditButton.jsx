@@ -6,7 +6,8 @@ export default function EditButton(props) {
     return (
         <>
         <button type='button' onClick={() => {
-            props.handleClickOpen()
+            // let's differentiate new and edit with a bool
+            props.handleClickOpen(true)
             props.setIsFormShown(false)
             props.setIsAddShown(true)
         }
