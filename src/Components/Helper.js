@@ -7,6 +7,6 @@ export function militaryToStandard(milTime) {
 }
 export function isoToNorm(nonFormatTime) {
     var unchangedDate = moment(nonFormatTime)
-    var changedDate = unchangedDate.utc().format('MMMM DD, YYYY HH:mm a')
+    var changedDate = unchangedDate.utc().format('MMMM DD, YYYY hh:mm a')
     return changedDate
 }
